@@ -1,9 +1,9 @@
 import 'dart:math' show Random;
 
 import 'package:spotify/spotify.dart';
-import 'package:spotify_remake_getx/domain/services/api_service.dart';
+import 'package:spotify_remake_getx/abstract/services/api_service.dart';
 
-class SpotifyApiService implements ApiServiceInterface {
+class SpotifyApiService implements ApiService {
   final SpotifyApi api;
   const SpotifyApiService(this.api);
 

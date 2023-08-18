@@ -1,17 +1,8 @@
-import 'package:flutter/material.dart' show BuildContext;
 import 'package:spotify_remake_getx/abstract/services/credentials_repository.dart';
 
-import 'api_service.dart';
-
-abstract class AuthService {
+abstract interface class AuthService<T> {
   final CredentialsRepository credentialsRepository;
   const AuthService({required this.credentialsRepository});
 
-  Future<AuthService?> fromSavedCredentials() {}
-
-  Future<SpotifyApi> authorize() async {
-    SpotifyApi? api = await fromSavedCredentials();
-    api ??= await fromAuthWebView();
-    return api;
-  }
+  Future<T> authorize();
 }

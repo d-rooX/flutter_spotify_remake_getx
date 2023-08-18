@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:spotify/spotify.dart';
-import 'package:spotify_remake_getx/domain/interfaces/home_interface.dart';
+import 'package:spotify_remake_getx/abstract/interfaces/home_interface.dart';
 
 class HomeController extends GetxController {
   final HomeInterface api;
@@ -17,6 +17,7 @@ class HomeController extends GetxController {
     super.onInit();
     loadRecentlyPlayed();
     loadRecommendedTracks();
+    loadTrendingTracks();
   }
 
   Future<void> loadRecentlyPlayed() async {
