@@ -3,18 +3,20 @@ import 'package:spotify/spotify.dart';
 import 'package:spotify_remake_getx/abstract/services/auth_service.dart';
 import 'package:spotify_remake_getx/abstract/services/credentials_repository.dart';
 import 'package:spotify_remake_getx/app.dart';
+import 'package:spotify_remake_getx/implementation/services/api_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class SpotifyAuthService implements AuthService<SpotifyApi> {
+class SpotifyAuthService implements AuthService<SpotifyApiService> {
   @override
   final CredentialsRepository<SpotifyApiCredentials> credentialsRepository;
   const SpotifyAuthService({required this.credentialsRepository});
 
   @override
-  Future<SpotifyApi> authorize() async {
+  Future<SpotifyApiService> authorize() async {
     var creds = await credentialsRepository.getCredentials();
     if (creds != null) {
-      return (await SpotifyApi.asyncFromCredentials(creds));
+      final api = await SpotifyApi.asyncFromCredentials(creds);
+      return SpotifyApiService(api);
     }
 
     creds = SpotifyApiCredentials(
@@ -30,7 +32,7 @@ class SpotifyAuthService implements AuthService<SpotifyApi> {
     final api = SpotifyApi.fromAuthCodeGrant(grant, responseUri);
 
     await credentialsRepository.saveCredentials(await api.getCredentials());
-    return api;
+    return SpotifyApiService(api);
   }
 
   Future<String> showAuthWebView(Uri uri) async {
@@ -53,8 +55,8 @@ class SpotifyAuthService implements AuthService<SpotifyApi> {
       );
 
     await controller.loadRequest(uri);
-    Get.showOverlay(
-      asyncFunction: () async => WebViewWidget(controller: controller),
+    await Get.dialog(
+      WebViewWidget(controller: controller),
     );
 
     return responseURI!;
