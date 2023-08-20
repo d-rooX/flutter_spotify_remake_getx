@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_remake_getx/abstract/services/api_service.dart';
 import 'package:spotify_remake_getx/abstract/services/auth_service.dart';
 import 'package:spotify_remake_getx/implementation/services/auth_service.dart';
@@ -24,8 +25,10 @@ class AuthBinding extends Bindings {
 }
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     GetMaterialApp(
+      theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
       debugShowCheckedModeBanner: false,
       home: const App(),
       initialBinding: AuthBinding(

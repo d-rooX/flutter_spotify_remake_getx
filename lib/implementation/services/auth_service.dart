@@ -13,17 +13,18 @@ class SpotifyAuthService implements AuthService<SpotifyApiService> {
 
   @override
   Future<SpotifyApiService> authorize() async {
-    var creds = await credentialsRepository.getCredentials();
+    final creds = await credentialsRepository.getCredentials();
     if (creds != null) {
       final api = await SpotifyApi.asyncFromCredentials(creds);
       return SpotifyApiService(api);
     }
 
-    creds = SpotifyApiCredentials(
-      AppConstants.CLIENT_ID,
-      AppConstants.CLIENT_SECRET,
+    final grant = SpotifyApi.authorizationCodeGrant(
+      SpotifyApiCredentials(
+        AppConstants.CLIENT_ID,
+        AppConstants.CLIENT_SECRET,
+      ),
     );
-    final grant = SpotifyApi.authorizationCodeGrant(creds);
     final authUri = grant.getAuthorizationUrl(
       Uri.parse(AppConstants.REDIRECT_URL),
       scopes: AppConstants.CLIENT_SCOPES,
@@ -40,7 +41,6 @@ class SpotifyAuthService implements AuthService<SpotifyApiService> {
 
     final WebViewController controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      // ..setBackgroundColor()
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (request) {
@@ -55,9 +55,7 @@ class SpotifyAuthService implements AuthService<SpotifyApiService> {
       );
 
     await controller.loadRequest(uri);
-    await Get.dialog(
-      WebViewWidget(controller: controller),
-    );
+    await Get.dialog(WebViewWidget(controller: controller));
 
     return responseURI!;
   }

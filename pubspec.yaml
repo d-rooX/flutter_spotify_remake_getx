@@ -39,6 +39,8 @@ dependencies:
   spotify: ^0.11.0
   webview_flutter: ^4.2.2
   shared_preferences: ^2.2.0
+  google_fonts: any
+  cached_network_image: ^3.2.3
 
 dev_dependencies:
   flutter_test:

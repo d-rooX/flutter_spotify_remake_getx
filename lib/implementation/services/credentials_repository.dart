@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:collection/collection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spotify/spotify.dart';
 import 'package:spotify_remake_getx/abstract/services/credentials_repository.dart';
@@ -20,9 +19,10 @@ class SpotifyCredentialsRepository
     if ([accessToken, refreshToken, scopes].any((element) => element == null)) {
       return null;
     }
-    Function eq = const ListEquality().equals;
 
-    if (!eq(AppConstants.CLIENT_SCOPES, scopes)) {
+    final _s1 = AppConstants.CLIENT_SCOPES.toSet();
+    final _s2 = scopes!.toSet();
+    if (_s1.length != _s2.length || !_s1.containsAll(_s2)) {
       log("DIFFERENT SCOPES", name: "Authentication");
       return null;
     }
