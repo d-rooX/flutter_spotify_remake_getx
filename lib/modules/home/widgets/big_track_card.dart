@@ -26,25 +26,24 @@ class _BigTrackCardState extends State<BigTrackCard> {
         (value) {
           setState(() => paletteColors = value);
 
-          final ColorTween tween = ColorTween(
-            begin: paletteColors![0].color,
-            end: paletteColors![1].color,
-          );
-          final betweenColor = PaletteColor(
-            tween.transform(0.5)!,
-            paletteColors![0].population,
-          );
+          // final ColorTween tween = ColorTween(
+          //   begin: paletteColors![0].color,
+          //   end: paletteColors![2].color,
+          // );
+          // final betweenColor = tween.transform(0.5)!;
+
+          final textColor = paletteColors![0].color.computeLuminance() < 0.50
+              ? Colors.white.withOpacity(0.65)
+              : Colors.black;
           textStyle = TextStyle(
-            color: paletteColors != null
-                ? betweenColor.bodyTextColor.withOpacity(1)
-                : Colors.white,
+            color: paletteColors != null ? textColor : Colors.white,
           );
         },
       );
     }
 
     return Container(
-      width: 270,
+      width: 250,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(35),
@@ -61,7 +60,7 @@ class _BigTrackCardState extends State<BigTrackCard> {
           ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
               child: Container(
                 height: 70,
                 padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -73,7 +72,7 @@ class _BigTrackCardState extends State<BigTrackCard> {
                           end: Alignment.bottomRight,
                           colors: paletteColors!
                               .take(2)
-                              .map((e) => e.color.withAlpha(170))
+                              .map((e) => e.color.withAlpha(180))
                               .toList(),
                         ),
                       )

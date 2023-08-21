@@ -7,21 +7,13 @@ import 'package:spotify_remake_getx/modules/home/widgets/home_search_bar.dart';
 import 'package:spotify_remake_getx/modules/home/widgets/home_tabs.dart';
 import 'package:spotify_remake_getx/modules/home/widgets/track_list.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  late HomeController controller;
-  late HomeTabController tabController;
-
-  @override
-  void initState() {
-    controller = Get.find<HomeController>();
-    tabController = Get.put(
+  Widget build(BuildContext context) {
+    final controller = Get.find<HomeController>();
+    final tabController = Get.put(
       HomeTabController(tabs: [
         HomeTracksTab(
           title: "Recommended",
@@ -34,11 +26,6 @@ class _HomePageState extends State<HomePage> {
       ]),
     );
 
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: DecoratedBox(
         decoration: const BoxDecoration(

@@ -54,7 +54,7 @@ class TrackView extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  track.artists!.map((e) => e.name!).join(", "),
+                  track.artists!.map((e) => e.name!).join(" | "),
                   overflow: TextOverflow.fade,
                   softWrap: false,
                   style: const TextStyle(

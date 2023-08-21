@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_remake_getx/abstract/services/api_service.dart';
@@ -24,6 +25,10 @@ class AuthBinding extends Bindings {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(systemNavigationBarColor: Colors.transparent),
+  );
+
   runApp(
     GetMaterialApp(
       theme: ThemeData(
