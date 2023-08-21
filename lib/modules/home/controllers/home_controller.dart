@@ -8,7 +8,7 @@ class HomeController extends GetxController {
   final HomeInterface api;
   HomeController({required this.api});
 
-  var recentlyPlayed = <PlayHistory>[].obs;
+  var recentlyPlayed = <Track>[].obs;
   var recommendedTracks = <Track>[].obs;
   var trendingTracks = <Track>[].obs;
 
@@ -22,23 +22,37 @@ class HomeController extends GetxController {
 
   Future<void> loadRecentlyPlayed() async {
     log("loading recently played");
-    final result = await api.loadRecentlyPlayed();
-    recentlyPlayed.assignAll(result);
+
+    final List<TrackSimple> tracks = [];
+    for (final entry in await api.loadRecentlyPlayed()) {
+      final track = entry.track!;
+      if (!tracks.contains(track)) {
+        tracks.add(track);
+      }
+    }
+
+    final res = await _loadFullTracks(tracks);
+    recentlyPlayed.assignAll(res);
   }
 
   Future<void> loadRecommendedTracks() async {
     log("loading recommended tracks");
     final result = await api.loadRecommendedTracks();
-    final tracks = <Track>[];
-    for (final track in result.tracks!) {
-      final fullTrack = await api.loadTrack(track.id!);
-      tracks.add(fullTrack);
-    }
+    final tracks = await _loadFullTracks(result.tracks!);
 
     recommendedTracks.assignAll(tracks);
   }
 
   Future<void> loadTrendingTracks() async {
     // Load trending tracks from API
+  }
+
+  Future<List<Track>> _loadFullTracks(Iterable<TrackSimple> tracks) async {
+    final result = <Track>[];
+    for (final track in tracks) {
+      final fullTrack = await api.loadTrack(track.id!);
+      result.add(fullTrack);
+    }
+    return result;
   }
 }

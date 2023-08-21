@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:spotify/spotify.dart';
 import 'package:spotify_remake_getx/abstract/services/auth_service.dart';
@@ -15,8 +17,12 @@ class SpotifyAuthService implements AuthService<SpotifyApiService> {
   Future<SpotifyApiService> authorize() async {
     final creds = await credentialsRepository.getCredentials();
     if (creds != null) {
-      final api = await SpotifyApi.asyncFromCredentials(creds);
-      return SpotifyApiService(api);
+      try {
+        final api = await SpotifyApi.asyncFromCredentials(creds);
+        return SpotifyApiService(api);
+      } catch (e) {
+        log(e.toString());
+      }
     }
 
     final grant = SpotifyApi.authorizationCodeGrant(

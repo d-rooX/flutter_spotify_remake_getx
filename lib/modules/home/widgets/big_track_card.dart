@@ -2,21 +2,54 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:spotify/spotify.dart';
 
-class BigTrackCard extends StatelessWidget {
+class BigTrackCard extends StatefulWidget {
   final Track track;
   const BigTrackCard({super.key, required this.track});
 
   @override
+  State<BigTrackCard> createState() => _BigTrackCardState();
+}
+
+class _BigTrackCardState extends State<BigTrackCard> {
+  List<PaletteColor>? paletteColors;
+  TextStyle textStyle = const TextStyle(color: Colors.white);
+
+  @override
   Widget build(BuildContext context) {
+    final imageProvider =
+        CachedNetworkImageProvider(widget.track.album!.images![1].url!);
+    if (paletteColors == null) {
+      getImagePalette(imageProvider).then(
+        (value) {
+          setState(() => paletteColors = value);
+
+          final ColorTween tween = ColorTween(
+            begin: paletteColors![0].color,
+            end: paletteColors![1].color,
+          );
+          final betweenColor = PaletteColor(
+            tween.transform(0.5)!,
+            paletteColors![0].population,
+          );
+          textStyle = TextStyle(
+            color: paletteColors != null
+                ? betweenColor.bodyTextColor.withOpacity(1)
+                : Colors.white,
+          );
+        },
+      );
+    }
+
     return Container(
       width: 270,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(35),
         image: DecorationImage(
-          image: CachedNetworkImageProvider(track.album!.images![0].url!),
+          image: imageProvider,
           fit: BoxFit.cover,
         ),
       ),
@@ -28,21 +61,32 @@ class BigTrackCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
               child: Container(
                 height: 70,
                 width: double.maxFinite,
-                // todo add child with track info
+                decoration: paletteColors != null
+                    ? BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: paletteColors!
+                              .take(2)
+                              .map((e) => e.color.withAlpha(170))
+                              .toList(),
+                        ),
+                      )
+                    : null,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text(
-                      track.name!,
-                      style: TextStyle(color: Colors.white),
+                      widget.track.name!,
+                      style: textStyle,
                     ),
                     Text(
-                      track.artists!.first.name!,
-                      style: TextStyle(color: Colors.white),
+                      widget.track.artists!.first.name!,
+                      style: textStyle,
                     ),
                   ],
                 ),
@@ -52,5 +96,13 @@ class BigTrackCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  static Future<List<PaletteColor>> getImagePalette(
+    ImageProvider imageProvider,
+  ) async {
+    final PaletteGenerator paletteGenerator =
+        await PaletteGenerator.fromImageProvider(imageProvider);
+    return paletteGenerator.paletteColors;
   }
 }
