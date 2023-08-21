@@ -64,6 +64,7 @@ class _BigTrackCardState extends State<BigTrackCard> {
               filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
               child: Container(
                 height: 70,
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 width: double.maxFinite,
                 decoration: paletteColors != null
                     ? BoxDecoration(
@@ -77,18 +78,28 @@ class _BigTrackCardState extends State<BigTrackCard> {
                         ),
                       )
                     : null,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(
-                      widget.track.name!,
-                      style: textStyle,
-                    ),
-                    Text(
-                      widget.track.artists!.first.name!,
-                      style: textStyle,
-                    ),
-                  ],
+                child: SizedBox.expand(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.track.name!,
+                        overflow: TextOverflow.fade,
+                        softWrap: false,
+                        style: textStyle.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        "${widget.track.artists!.first.name!} - ${widget.track.album!.name!}",
+                        overflow: TextOverflow.fade,
+                        softWrap: false,
+                        style: textStyle,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

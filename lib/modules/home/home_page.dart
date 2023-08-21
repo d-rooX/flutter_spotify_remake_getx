@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:spotify_remake_getx/modules/home/controllers/home_controller.dart';
 import 'package:spotify_remake_getx/modules/home/controllers/home_tab_controller.dart';
 import 'package:spotify_remake_getx/modules/home/widgets/carousel_section.dart';
 import 'package:spotify_remake_getx/modules/home/widgets/home_search_bar.dart';
 import 'package:spotify_remake_getx/modules/home/widgets/home_tabs.dart';
+import 'package:spotify_remake_getx/modules/home/widgets/track_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -51,16 +51,21 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: Get.mediaQuery.padding.top),
-            const HomeSearchBar(),
-            const SizedBox(height: 15),
-            const CarouselSection(),
-            const SizedBox(height: 20),
-            const HomeTabs(),
-          ],
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: Get.mediaQuery.padding.top),
+              const HomeSearchBar(),
+              const SizedBox(height: 10),
+              const CarouselSection(),
+              const SizedBox(height: 20),
+              const HomeTabs(),
+              const SizedBox(height: 20),
+              Obx(() => TrackList(tracks: tabController.currentTab.tracks)),
+            ],
+          ),
         ),
       ),
     );
