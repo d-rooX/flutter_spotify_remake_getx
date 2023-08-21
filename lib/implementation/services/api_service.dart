@@ -43,6 +43,10 @@ class SpotifyApiService implements ApiService {
     return track;
   }
 
+  // Future<Stream<Track>> loadTracks(Iterable<String> trackIds ids) {
+  //  todo make batch track fetch
+  // }
+
   @override
   Future<Playlist> loadPlaylist(String id) async {
     final playlist = await api.playlists.get(id);
