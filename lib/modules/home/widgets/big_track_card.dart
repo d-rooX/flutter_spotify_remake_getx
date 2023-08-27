@@ -17,28 +17,30 @@ class _BigTrackCardState extends State<BigTrackCard> {
   List<PaletteColor>? paletteColors;
   TextStyle textStyle = const TextStyle(color: Colors.white);
 
+  // used for smoothly animate between tabs
+  Track? oldTrack;
+
   @override
   Widget build(BuildContext context) {
-    final imageProvider =
-        CachedNetworkImageProvider(widget.track.album!.images![1].url!);
-    if (paletteColors == null) {
+    final imageProvider = CachedNetworkImageProvider(
+      widget.track.album!.images![1].url!,
+    );
+
+    // Generating colors for title & artist block
+    if (paletteColors == null || oldTrack != widget.track) {
+      oldTrack = widget.track;
       getImagePalette(imageProvider).then(
-        (value) {
-          setState(() => paletteColors = value);
+        (value) => setState(() {
+          paletteColors = value;
 
-          // final ColorTween tween = ColorTween(
-          //   begin: paletteColors![0].color,
-          //   end: paletteColors![2].color,
-          // );
-          // final betweenColor = tween.transform(0.5)!;
-
-          final textColor = paletteColors![0].color.computeLuminance() < 0.50
+          final textColor = paletteColors![0].color.computeLuminance() < 0.45
               ? Colors.white.withOpacity(0.65)
               : Colors.black;
+
           textStyle = TextStyle(
             color: paletteColors != null ? textColor : Colors.white,
           );
-        },
+        }),
       );
     }
 
@@ -47,61 +49,17 @@ class _BigTrackCardState extends State<BigTrackCard> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(35),
-        image: DecorationImage(
-          image: imageProvider,
-          fit: BoxFit.cover,
-        ),
+        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           const Icon(Icons.more_horiz, color: Colors.white, size: 36),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-              child: Container(
-                height: 70,
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                width: double.maxFinite,
-                decoration: paletteColors != null
-                    ? BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: paletteColors!
-                              .take(2)
-                              .map((e) => e.color.withAlpha(180))
-                              .toList(),
-                        ),
-                      )
-                    : null,
-                child: SizedBox.expand(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.track.name!,
-                        overflow: TextOverflow.fade,
-                        softWrap: false,
-                        style: textStyle.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        "${widget.track.artists!.first.name!} - ${widget.track.album!.name!}",
-                        overflow: TextOverflow.fade,
-                        softWrap: false,
-                        style: textStyle,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+          BlurredTrackInfo(
+            paletteColors: paletteColors,
+            textStyle: textStyle,
+            track: widget.track,
           )
         ],
       ),
@@ -114,5 +72,74 @@ class _BigTrackCardState extends State<BigTrackCard> {
     final PaletteGenerator paletteGenerator =
         await PaletteGenerator.fromImageProvider(imageProvider);
     return paletteGenerator.paletteColors;
+  }
+}
+
+class BlurredTrackInfo extends StatelessWidget {
+  const BlurredTrackInfo({
+    super.key,
+    required this.paletteColors,
+    required this.textStyle,
+    required this.track,
+  });
+
+  final List<PaletteColor>? paletteColors;
+  final TextStyle textStyle;
+  final Track track;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(15),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: AnimatedContainer(
+          curve: Curves.easeOut,
+          duration: const Duration(seconds: 1),
+          height: 70,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          width: double.maxFinite,
+          decoration: paletteColors != null
+              ? BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: paletteColors!
+                        .take(2)
+                        .map((e) => e.color.withAlpha(180))
+                        .toList(),
+                  ),
+                )
+              : null,
+          child: SizedBox.expand(
+            child: AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 500),
+              style: textStyle,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    track.name!,
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                    style: const TextStyle(
+                      inherit: true,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    "${track.artists!.first.name!} - ${track.album!.name!}",
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

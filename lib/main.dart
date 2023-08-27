@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_remake_getx/abstract/services/api_service.dart';
 import 'package:spotify_remake_getx/abstract/services/auth_service.dart';
-import 'package:spotify_remake_getx/implementation/services/api_service.dart';
-import 'package:spotify_remake_getx/implementation/services/auth_service.dart';
-import 'package:spotify_remake_getx/implementation/services/credentials_repository.dart';
+import 'package:spotify_remake_getx/implementation/services/spotify/api_service.dart';
+import 'package:spotify_remake_getx/implementation/services/spotify/auth_service.dart';
+import 'package:spotify_remake_getx/implementation/services/spotify/credentials_repository.dart';
 import 'package:spotify_remake_getx/routes.dart';
 
 import 'app.dart';
@@ -27,6 +27,10 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(systemNavigationBarColor: Colors.transparent),
+  );
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.manual,
+    overlays: [SystemUiOverlay.top],
   );
 
   runApp(

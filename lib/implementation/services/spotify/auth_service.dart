@@ -5,11 +5,10 @@ import 'package:spotify/spotify.dart';
 import 'package:spotify_remake_getx/abstract/services/auth_service.dart';
 import 'package:spotify_remake_getx/abstract/services/credentials_repository.dart';
 import 'package:spotify_remake_getx/app.dart';
-import 'package:spotify_remake_getx/implementation/services/api_service.dart';
+import 'package:spotify_remake_getx/implementation/services/spotify/api_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class SpotifyAuthService implements AuthService<SpotifyApiService> {
-  @override
   final CredentialsRepository<SpotifyApiCredentials> credentialsRepository;
   const SpotifyAuthService({required this.credentialsRepository});
 

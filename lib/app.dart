@@ -8,6 +8,8 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
+      extendBodyBehindAppBar: true,
       body: Center(
         child: ElevatedButton(
           onPressed: () => Get.toNamed(Routes.HOME),
