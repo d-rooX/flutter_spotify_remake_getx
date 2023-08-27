@@ -7,11 +7,13 @@ import 'package:spotify_remake_getx/abstract/services/auth_service.dart';
 import 'package:spotify_remake_getx/implementation/services/spotify/api_service.dart';
 import 'package:spotify_remake_getx/implementation/services/spotify/auth_service.dart';
 import 'package:spotify_remake_getx/implementation/services/spotify/credentials_repository.dart';
+import 'package:spotify_remake_getx/modules/player/player_page.dart';
 import 'package:spotify_remake_getx/routes.dart';
 
 import 'app.dart';
 import 'modules/home/bindings.dart';
 import 'modules/home/home_page.dart';
+import 'modules/player/bindings.dart';
 
 class AuthBinding extends Bindings {
   final AuthService<SpotifyApiService> authService;
@@ -50,6 +52,11 @@ void main() {
           name: Routes.HOME,
           page: () => const HomePage(),
           binding: HomeBinding(),
+        ),
+        GetPage(
+          name: Routes.PLAYER,
+          page: () => const PlayerPage(),
+          binding: PlayerBinding(),
         ),
       ],
     ),

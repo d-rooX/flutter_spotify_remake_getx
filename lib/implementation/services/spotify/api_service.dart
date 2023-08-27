@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:math' show Random;
 
 import 'package:spotify/spotify.dart';
@@ -69,8 +70,29 @@ class SpotifyApiService implements ApiService {
   }
 
   @override
-  Future<void> play(String trackId) async {
+  Future<PlaybackState?> play(String trackId) async {
     await api.player.addToQueue(trackId);
-    await api.player.next();
+    return await api.player.next();
+  }
+
+  @override
+  Future<PlaybackState> getPlaybackState() async {
+    try {
+      final state = await api.player.playbackState();
+      return state;
+    } catch (e) {
+      final devices = await api.player.devices();
+      for (final device in devices) {
+        log("Device: ${device.name!}; Id: ${device.id!}");
+      }
+
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Track?> getCurrentTrack() async {
+    final data = await api.player.currentlyPlaying();
+    return data.item;
   }
 }

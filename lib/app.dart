@@ -10,10 +10,20 @@ class App extends StatelessWidget {
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: true,
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () => Get.toNamed(Routes.HOME),
-          child: const Text("Go to home"),
+      body: SizedBox.expand(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () => Get.toNamed(Routes.HOME),
+              child: const Text("Home"),
+            ),
+            ElevatedButton(
+              onPressed: () => Get.toNamed(Routes.PLAYER),
+              child: const Text("Player"),
+            ),
+          ],
         ),
       ),
     );
