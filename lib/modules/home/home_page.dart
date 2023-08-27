@@ -40,25 +40,30 @@ class HomePage extends StatelessWidget {
               ],
             ),
           ),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: Get.mediaQuery.padding.top),
-                const HomeSearchBar(),
-                const SizedBox(height: 10),
-                const CarouselSection(),
-                const SizedBox(height: 20),
-                const HomeTabs(),
-                const SizedBox(height: 20),
-                Obx(
-                  () => tabController.currentTab.tracks.isNotEmpty
-                      ? TrackList(tracks: tabController.currentTab.tracks)
-                      : const Center(child: Text("Loading...")),
-                ),
-                SizedBox(height: Get.mediaQuery.padding.bottom),
-              ],
+          child: RefreshIndicator(
+            edgeOffset: Get.mediaQuery.padding.top,
+            displacement: 80,
+            onRefresh: () async => controller.reload(),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: Get.mediaQuery.padding.top),
+                  const HomeSearchBar(),
+                  const SizedBox(height: 10),
+                  const CarouselSection(),
+                  const SizedBox(height: 20),
+                  const HomeTabs(),
+                  const SizedBox(height: 20),
+                  Obx(
+                    () => tabController.currentTab.tracks.isNotEmpty
+                        ? TrackList(tracks: tabController.currentTab.tracks)
+                        : const Center(child: Text("Loading...")),
+                  ),
+                  SizedBox(height: Get.mediaQuery.padding.bottom),
+                ],
+              ),
             ),
           ),
         ),

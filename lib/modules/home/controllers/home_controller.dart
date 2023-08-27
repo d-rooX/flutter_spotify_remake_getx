@@ -14,7 +14,15 @@ class HomeController extends GetxController {
 
   @override
   void onInit() {
+    reload();
     super.onInit();
+  }
+
+  void reload() {
+    recentlyPlayed.clear();
+    recommendedTracks.clear();
+    trendingTracks.clear();
+
     loadRecentlyPlayed();
     loadRecommendedTracks();
     loadTrendingTracks();
