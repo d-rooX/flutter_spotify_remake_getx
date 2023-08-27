@@ -29,6 +29,11 @@ class AppConstants {
     'user-read-private',
     'user-top-read',
     'user-library-read',
+    'user-modify-playback-state',
+    'user-read-playback-state',
+    'user-read-currently-playing',
+
+    ///
     'playlist-read-private',
     'playlist-read-collaborative',
   ];

@@ -1,26 +1,22 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 import 'dart:math' show Random;
 
-import 'package:path_provider/path_provider.dart';
 import 'package:spotify/spotify.dart';
 import 'package:spotify_remake_getx/abstract/services/api_service.dart';
 
-Future<void> saveResultToJson(String key, Map<String, dynamic> data) async {
-  final directory = await getApplicationDocumentsDirectory();
-  final filePath = '${directory.path}/mockDB.json';
-  final file = File.fromUri(Uri.file(filePath));
-
-  if (!await file.exists()) {
-    await file.create();
-  }
-
-  log(filePath, name: "MockJsonFilePath");
-
-  final data = json.decode(await file.readAsString());
-  log(data);
-}
+// Future<void> saveResultToJson(String key, Map<String, dynamic> data) async {
+//   final directory = await getApplicationDocumentsDirectory();
+//   final filePath = '${directory.path}/mockDB.json';
+//   final file = File.fromUri(Uri.file(filePath));
+//
+//   if (!await file.exists()) {
+//     await file.create();
+//   }
+//
+//   log(filePath, name: "MockJsonFilePath");
+//
+//   final data = json.decode(await file.readAsString());
+//   log(data);
+// }
 
 class SpotifyApiService implements ApiService {
   final SpotifyApi api;
@@ -70,5 +66,11 @@ class SpotifyApiService implements ApiService {
   Future<Playlist> loadPlaylist(String id) async {
     final playlist = await api.playlists.get(id);
     return playlist;
+  }
+
+  @override
+  Future<void> play(String trackId) async {
+    await api.player.addToQueue(trackId);
+    await api.player.next();
   }
 }
