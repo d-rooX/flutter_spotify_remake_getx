@@ -20,7 +20,7 @@ class PlayerController extends GetxController {
       currentTrack.value = _currentTrack;
       return;
     }
-    final pbState = await api.getPlaybackState();
+    // final pbState = await api.getPlaybackState();
   }
 
   Future<void> play(String trackId) async {

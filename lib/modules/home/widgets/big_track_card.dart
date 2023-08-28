@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:spotify/spotify.dart';
+import 'package:spotify_remake_getx/utils.dart';
 
 class BigTrackCard extends StatefulWidget {
   final Track track;
@@ -29,7 +30,7 @@ class _BigTrackCardState extends State<BigTrackCard> {
     // Generating colors for title & artist block
     if (paletteColors == null || oldTrack != widget.track) {
       oldTrack = widget.track;
-      getImagePalette(imageProvider).then(
+      Utils.getImagePalette(imageProvider).then(
         (value) => setState(() {
           paletteColors = value;
 
@@ -64,14 +65,6 @@ class _BigTrackCardState extends State<BigTrackCard> {
         ],
       ),
     );
-  }
-
-  static Future<List<PaletteColor>> getImagePalette(
-    ImageProvider imageProvider,
-  ) async {
-    final PaletteGenerator paletteGenerator =
-        await PaletteGenerator.fromImageProvider(imageProvider);
-    return paletteGenerator.paletteColors;
   }
 }
 
