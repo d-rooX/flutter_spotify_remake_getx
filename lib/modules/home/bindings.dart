@@ -7,6 +7,7 @@ class HomeBinding implements Bindings {
   @override
   void dependencies() {
     final apiService = Get.find<ApiService>();
+    apiService.connectToSpotifySDK();
     Get.put(HomeController(api: apiService));
     Get.put(PlayerController(api: apiService));
   }

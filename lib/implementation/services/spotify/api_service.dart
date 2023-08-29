@@ -3,6 +3,8 @@ import 'dart:math' show Random;
 
 import 'package:spotify/spotify.dart';
 import 'package:spotify_remake_getx/abstract/services/api_service.dart';
+import 'package:spotify_remake_getx/app.dart';
+import 'package:spotify_sdk/spotify_sdk.dart';
 
 // Future<void> saveResultToJson(String key, Map<String, dynamic> data) async {
 //   final directory = await getApplicationDocumentsDirectory();
@@ -22,6 +24,18 @@ import 'package:spotify_remake_getx/abstract/services/api_service.dart';
 class SpotifyApiService implements ApiService {
   final SpotifyApi api;
   const SpotifyApiService(this.api);
+
+  @override
+  Future<void> connectToSpotifySDK() async {
+    final credentials = await api.getCredentials();
+    final result = await SpotifySdk.connectToSpotifyRemote(
+      clientId: credentials.clientId!,
+      redirectUrl: AppConstants.REDIRECT_URL,
+      accessToken: credentials.accessToken,
+      playerName: "droox Flutter Remake",
+    );
+    log("Done connection with result: $result", name: "SpotifySDKConnection");
+  }
 
   @override
   Future<Iterable<PlayHistory>> loadRecentlyPlayed() async {
