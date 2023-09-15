@@ -41,7 +41,8 @@ class PlayerController extends GetxController {
     );
     SpotifySdk.subscribePlayerState().listen(
       (event) async {
-        // final track = event.track!.toSpotifyLib;
+        print(event.playbackPosition);
+
         await Future.delayed(
           const Duration(milliseconds: 500),
           () async {

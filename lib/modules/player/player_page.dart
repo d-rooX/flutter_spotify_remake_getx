@@ -12,6 +12,7 @@ class PlayerPage extends GetView<PlayerController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: GetX<PlayerController>(
         builder: (controller) {
           if (controller.currentTrack.value == null) {
@@ -52,8 +53,16 @@ class _LoadedPlayerPageState extends State<_LoadedPlayerPage> {
         widget.track.album!.images![0].url!,
       );
     });
-    final paletteColors = await Utils.getImagePalette(imageProvider!);
-    controller!.paletteColors.assignAll(paletteColors.map((e) => e.color));
+    final paletteColors = <Color>[];
+    for (final color in await Utils.getImagePalette(imageProvider!)) {
+      Color _color = color.color;
+      if (_color.computeLuminance() > 0.5) {
+        _color = _color.withOpacity(0.7);
+      }
+      paletteColors.add(_color);
+    }
+
+    controller!.paletteColors.assignAll(paletteColors);
   }
 
   @override
@@ -81,66 +90,85 @@ class _LoadedPlayerPageState extends State<_LoadedPlayerPage> {
             child: Column(
               children: [
                 SizedBox(height: Get.mediaQuery.padding.top + 25),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Icon(
-                      CupertinoIcons.chevron_down,
-                      color: Colors.white,
-                    ),
-                    Text("something here", style: TextStyle(fontSize: 16)),
-                    Icon(
-                      Icons.more_horiz,
-                      color: Colors.white,
-                      size: 34,
-                    ),
-                  ],
-                ),
+                const PlayerTop(),
                 const SizedBox(height: 50),
                 _TrackCover(imageProvider: imageProvider!),
                 const SizedBox(height: 40),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.track.name!,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                widget.track.artists!
-                                    .map((e) => e.name!)
-                                    .join(", "),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey.shade400,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          const Icon(
-                            Icons.circle_outlined,
-                            color: Colors.white,
-                            size: 28,
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                )
+                PlayerBottom(track: widget.track)
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class PlayerTop extends StatelessWidget {
+  const PlayerTop({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Icon(
+          CupertinoIcons.chevron_down,
+          color: Colors.white,
+        ),
+        Text("something here", style: TextStyle(fontSize: 16)),
+        Icon(
+          Icons.more_horiz,
+          color: Colors.white,
+          size: 34,
+        ),
+      ],
+    );
+  }
+}
+
+class PlayerBottom extends StatelessWidget {
+  final Track track;
+  const PlayerBottom({super.key, required this.track});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                track.name!,
+                softWrap: false,
+                overflow: TextOverflow.fade,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                track.artists!.map((e) => e.name!).join(", "),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey.shade400,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 30),
+          LinearProgressIndicator(
+            value: 0.5,
+            color: Colors.white,
+            backgroundColor: Colors.grey.withOpacity(0.5),
+          ),
+        ],
       ),
     );
   }

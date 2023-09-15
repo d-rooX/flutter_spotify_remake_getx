@@ -14,4 +14,10 @@ mixin SpotifyPlayer on ApiService implements PlayerInterface {
     final data = await api.player.currentlyPlaying();
     return data.item;
   }
+
+  @override
+  Future<PlaybackState> getPlaybackState() async {
+    final state = await api.player.playbackState();
+    return state;
+  }
 }
