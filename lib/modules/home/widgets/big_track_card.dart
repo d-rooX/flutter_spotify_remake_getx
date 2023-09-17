@@ -48,12 +48,15 @@ class _BigTrackCardState extends State<BigTrackCard> {
     }
 
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         final controller = Get.find<PlayerController>();
         if (controller.currentTrack!.id! != widget.track.id!) {
-          controller.api.play(widget.track.uri!);
+          await controller.play(widget.track.uri!);
         }
-        Get.to(() => const PlayerPage());
+        Get.to(() => PlayerPage(
+              openedTrackImageProvider: imageProvider,
+              openedTrackId: widget.track.id!,
+            ));
       },
       child: Hero(
         tag: "${widget.track.id!}_card",

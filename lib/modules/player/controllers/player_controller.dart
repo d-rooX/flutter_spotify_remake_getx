@@ -33,9 +33,17 @@ class PlayerController extends GetxController {
     super.onInit();
   }
 
-  refreshTrackDuration() async {
+  void refreshTrackDuration() async {
     await _getTrackDuration();
     _startTimer();
+  }
+
+  Future<void> play(String trackId) async {
+    isPlaying.value = false;
+    imageProvider.value = null;
+    progressMs.value = 0;
+
+    await api.play(trackId);
   }
 
   void _loadImage() async {
@@ -74,10 +82,10 @@ class PlayerController extends GetxController {
     return accessToken;
   }
 
-  _subscribeToPlayerState() {
+  void _subscribeToPlayerState() {
     SpotifySdk.subscribePlayerState().listen((event) async {
       await Future.delayed(
-        const Duration(milliseconds: 500),
+        const Duration(milliseconds: 50),
         () async {
           try {
             playbackState.value = await api.getPlaybackState();
@@ -114,7 +122,7 @@ class PlayerController extends GetxController {
 
   void _startTimer() {
     timer?.cancel();
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(milliseconds: 300), (timer) {
       if (!isPlaying.value) {
         timer.cancel();
         return;
@@ -122,7 +130,7 @@ class PlayerController extends GetxController {
 
       if (trackDuration.value != null) {
         if (progressMs.value < trackDuration.value!.inMilliseconds) {
-          progressMs.value += 1000;
+          progressMs.value += 300;
         } else {
           timer.cancel();
           isPlaying.value = false;

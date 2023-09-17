@@ -41,12 +41,12 @@ class PlayerBottom extends GetView<PlayerController> {
           const SizedBox(height: 20),
           Obx(() {
             final currentMinutes =
-                "${controller.progressMs.value ~/ 60000}:${(controller.progressMs.value ~/ 1000) % 60}";
+                "${controller.progressMs.value ~/ 60000}:${((controller.progressMs.value ~/ 1000) % 60).toString().padLeft(2, '0')}";
             final duration = controller.trackDuration.value;
             String durationString = "HUI";
             if (duration != null) {
               durationString =
-                  "${duration.inMinutes.remainder(60)}:${(duration.inSeconds.remainder(60))}";
+                  "${duration.inMinutes.remainder(60)}:${(duration.inSeconds.remainder(60).toString().padLeft(2, '0'))}";
             }
 
             return Row(
@@ -69,8 +69,6 @@ class PlaybackLine extends GetView<PlayerController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.refreshTrackDuration();
-
     return Obx(
       () {
         final progressMs = controller.progressMs.value;

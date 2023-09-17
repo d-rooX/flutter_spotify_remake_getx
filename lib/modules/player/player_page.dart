@@ -6,7 +6,13 @@ import 'package:spotify_remake_getx/modules/player/widgets/player_top.dart';
 import 'package:spotify_remake_getx/modules/player/widgets/track_cover.dart';
 
 class PlayerPage extends GetView<PlayerController> {
-  const PlayerPage({super.key});
+  final String? openedTrackId;
+  final ImageProvider? openedTrackImageProvider;
+  const PlayerPage({
+    super.key,
+    this.openedTrackId,
+    this.openedTrackImageProvider,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +22,17 @@ class PlayerPage extends GetView<PlayerController> {
         if (controller.playbackState.value == null) {
           return const Center(child: CircularProgressIndicator());
         }
-        return _LoadedPlayerPage();
+        return _LoadedPlayerPage(openedTrackId, openedTrackImageProvider);
       }),
     );
   }
 }
 
 class _LoadedPlayerPage extends GetView<PlayerController> {
+  final String? openedTrackId;
+  final ImageProvider? openedTrackImageProvider;
+  const _LoadedPlayerPage(this.openedTrackId, this.openedTrackImageProvider);
+
   @override
   Widget build(BuildContext context) {
     return SizedBox.expand(
@@ -46,12 +56,13 @@ class _LoadedPlayerPage extends GetView<PlayerController> {
                 const PlayerTop(),
                 const SizedBox(height: 50),
                 TrackCover(
-                  imageProvider: controller.imageProvider.value ??
+                  imageProvider: openedTrackImageProvider ??
+                      controller.imageProvider.value ??
                       Image.network("https://shorturl.at/iyQT3").image,
-                  trackId: controller.currentTrack!.id!,
+                  trackId: openedTrackId ?? controller.currentTrack!.id!,
                 ),
                 const SizedBox(height: 40),
-                PlayerBottom()
+                const PlayerBottom()
               ],
             ),
           ),
