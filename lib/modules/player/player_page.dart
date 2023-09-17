@@ -13,14 +13,12 @@ class PlayerPage extends GetView<PlayerController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: GetX<PlayerController>(
-        builder: (controller) {
-          if (controller.currentTrack.value == null) {
-            return const CircularProgressIndicator();
-          }
-          return _LoadedPlayerPage(track: controller.currentTrack.value!);
-        },
-      ),
+      body: Obx(() {
+        if (controller.playbackState.value == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return _LoadedPlayerPage(track: controller.playbackState.value!.item!);
+      }),
     );
   }
 }
@@ -118,7 +116,10 @@ class PlayerTop extends StatelessWidget {
           CupertinoIcons.chevron_down,
           color: Colors.white,
         ),
-        Text("something here", style: TextStyle(fontSize: 16)),
+        Text(
+          "dont look at this shit bro",
+          style: TextStyle(fontSize: 16),
+        ),
         Icon(
           Icons.more_horiz,
           color: Colors.white,
@@ -162,17 +163,60 @@ class PlayerBottom extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 30),
-          LinearProgressIndicator(
-            value: 0.5,
-            color: Colors.white,
-            backgroundColor: Colors.grey.withOpacity(0.5),
+          const SizedBox(height: 20),
+          GetX<PlayerController>(
+            builder: (controller) {
+              final currentMinutes =
+                  "${controller.progressMs.value ~/ 60000}:${controller.progressMs.value ~/ 1000}";
+
+              final duration = controller.trackDuration.value!;
+              final durationString =
+                  "${duration.inMinutes.remainder(60)}:${(duration.inSeconds.remainder(60))}";
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(currentMinutes),
+                  Text(durationString),
+                ],
+              );
+            },
           ),
+          const PlaybackLine(),
         ],
       ),
     );
   }
 }
+
+class PlaybackLine extends GetView<PlayerController> {
+  const PlaybackLine({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    controller.refreshTrackDuration();
+
+    return Obx(
+      () {
+        final progressMs = controller.progressMs.value;
+        final trackDuration = controller.trackDuration.value;
+
+        double percent = 0;
+        if (trackDuration != null && trackDuration.inMilliseconds > 0) {
+          percent = progressMs / trackDuration.inMilliseconds;
+        }
+
+        return LinearProgressIndicator(
+          value: percent,
+          color: Colors.white,
+          backgroundColor: Colors.grey.withOpacity(0.5),
+        );
+      },
+    );
+  }
+}
+
+///////////////////////////////
 
 class _TrackCover extends StatelessWidget {
   final CachedNetworkImageProvider imageProvider;

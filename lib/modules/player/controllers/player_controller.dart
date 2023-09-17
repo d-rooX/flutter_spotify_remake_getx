@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart' show Color;
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,13 +13,23 @@ class PlayerController extends GetxController {
   final PlayerInterface api;
   PlayerController({required this.api});
 
-  Rx<Track?> currentTrack = Rx(null);
-  var paletteColors = <Color>[].obs;
+  final progressMs = RxInt(0);
+  final trackDuration = Rx<Duration?>(null);
+  final isPlaying = RxBool(false);
+
+  final playbackState = Rx<PlaybackState?>(null);
+  final paletteColors = <Color>[].obs;
+  Timer? timer;
 
   @override
   void onInit() {
     _initSpotifySDK();
+    _getPlaybackState();
     super.onInit();
+  }
+
+  Future _getPlaybackState() async {
+    playbackState.value = await api.getPlaybackState();
   }
 
   // todo move private methods to class
@@ -33,24 +46,64 @@ class PlayerController extends GetxController {
     return accessToken;
   }
 
+  _subscribeToPlayerState() {
+    SpotifySdk.subscribePlayerState().listen((event) async {
+      await Future.delayed(
+        const Duration(milliseconds: 500),
+        () async {
+          try {
+            playbackState.value = await api.getPlaybackState();
+          } catch (e) {
+            log("No playback state was got from spotify", error: true);
+          }
+
+          await refreshTrackDuration();
+        },
+      );
+    });
+  }
+
   Future<void> _initSpotifySDK() async {
     await SpotifySdk.connectToSpotifyRemote(
       clientId: AppConstants.CLIENT_ID,
       redirectUrl: AppConstants.REDIRECT_URL,
       accessToken: await _getAccessToken(),
     );
-    SpotifySdk.subscribePlayerState().listen(
-      (event) async {
-        print(event.playbackPosition);
+    _subscribeToPlayerState();
+  }
 
-        await Future.delayed(
-          const Duration(milliseconds: 500),
-          () async {
-            final _currentTrack = await api.getCurrentTrack();
-            if (_currentTrack != null) currentTrack.value = _currentTrack;
-          },
-        );
-      },
-    );
+  Future<void> _getTrackDuration() async {
+    final state = playbackState.value;
+    if (state == null) {
+      return;
+    }
+
+    progressMs.value = state.progress_ms!;
+    isPlaying.value = state.isPlaying!;
+    trackDuration.value = state.item!.duration;
+  }
+
+  refreshTrackDuration() async {
+    await _getTrackDuration();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    timer?.cancel();
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!isPlaying.value) {
+        timer.cancel();
+        return;
+      }
+
+      if (trackDuration.value != null) {
+        if (progressMs.value < trackDuration.value!.inMilliseconds) {
+          progressMs.value += 1000;
+        } else {
+          timer.cancel();
+          isPlaying.value = false;
+        }
+      }
+    });
   }
 }
