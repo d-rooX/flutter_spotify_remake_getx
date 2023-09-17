@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart' show Color;
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spotify/spotify.dart';
@@ -22,7 +22,7 @@ class PlayerController extends GetxController {
 
   final playbackState = Rx<PlaybackState?>(null);
   final paletteColors = <Color>[].obs;
-  final imageProvider = Rx<CachedNetworkImageProvider?>(null);
+  final imageProvider = Rx<ImageProvider?>(null);
 
   Timer? timer;
 
@@ -31,11 +31,6 @@ class PlayerController extends GetxController {
     _initSpotifySDK();
     _getPlaybackState();
     super.onInit();
-  }
-
-  void refreshTrackDuration() async {
-    await _getTrackDuration();
-    _startTimer();
   }
 
   Future<void> play(Track track) async {
@@ -95,8 +90,8 @@ class PlayerController extends GetxController {
             log("No playback state was got from spotify", error: true);
           }
 
-          refreshTrackDuration();
-          _loadImage();
+          await _getTrackDuration();
+          _startTimer();
         },
       );
     });

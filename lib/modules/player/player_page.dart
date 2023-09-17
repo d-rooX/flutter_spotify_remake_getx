@@ -14,21 +14,24 @@ class PlayerPage extends GetView<PlayerController> {
 
   @override
   Widget build(BuildContext context) {
+    if (openedTrackImageProvider != null) {
+      controller.imageProvider.value = openedTrackImageProvider;
+    }
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Obx(() {
         if (controller.playbackState.value == null) {
           return const Center(child: CircularProgressIndicator());
         }
-        return _LoadedPlayerPage(openedTrackImageProvider);
+        return const _LoadedPlayerPage();
       }),
     );
   }
 }
 
 class _LoadedPlayerPage extends GetView<PlayerController> {
-  final ImageProvider? openedTrackImageProvider;
-  const _LoadedPlayerPage(this.openedTrackImageProvider);
+  const _LoadedPlayerPage();
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +56,7 @@ class _LoadedPlayerPage extends GetView<PlayerController> {
                 const PlayerTop(),
                 const SizedBox(height: 50),
                 TrackCover(
-                  imageProvider: openedTrackImageProvider ??
-                      controller.imageProvider.value ??
+                  imageProvider: controller.imageProvider.value ??
                       Image.network("https://shorturl.at/iyQT3").image,
                   trackId: controller.currentTrack.value!.id!,
                 ),

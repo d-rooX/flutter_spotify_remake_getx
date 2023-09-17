@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:spotify_remake_getx/modules/player/controllers/player_controller.dart';
 
-class TrackCover extends StatelessWidget {
+class TrackCover extends GetView<PlayerController> {
   final ImageProvider imageProvider;
   final String trackId;
   const TrackCover({
