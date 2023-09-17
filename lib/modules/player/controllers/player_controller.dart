@@ -47,8 +47,18 @@ class PlayerController extends GetxController {
     imageProvider.value = null;
     progressMs.value = 0;
 
-    isPlaying.value = true;
+    isPlaying.value = false;
     await api.play(track.uri!);
+  }
+
+  Future<void> nextTrack() async {
+    isPlaying.value = false;
+    await api.nextTrack();
+  }
+
+  Future<void> prevTrack() async {
+    isPlaying.value = false;
+    await api.prevTrack();
   }
 
   void _loadImage() async {

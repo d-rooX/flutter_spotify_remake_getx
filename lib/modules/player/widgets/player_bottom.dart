@@ -65,9 +65,10 @@ class PlayerBottom extends GetView<PlayerController> {
             () => Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                const PlaybackButton(
+                PlaybackButton(
                   width: 12,
-                  icon: Icon(Icons.chevron_left, size: 32),
+                  onTap: () async => await controller.prevTrack(),
+                  icon: const Icon(Icons.chevron_left, size: 32),
                 ),
                 PlaybackButton(
                   width: 12,
@@ -76,9 +77,10 @@ class PlayerBottom extends GetView<PlayerController> {
                       ? const Icon(Icons.pause, size: 32)
                       : const Icon(Icons.play_arrow, size: 32),
                 ),
-                const PlaybackButton(
+                PlaybackButton(
                   width: 12,
-                  icon: Icon(Icons.chevron_right, size: 32),
+                  onTap: () async => await controller.nextTrack(),
+                  icon: const Icon(Icons.chevron_right, size: 32),
                 ),
               ],
             ),

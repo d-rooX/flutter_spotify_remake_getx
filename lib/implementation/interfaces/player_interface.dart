@@ -15,6 +15,16 @@ mixin SpotifyPlayer on ApiService implements PlayerInterface {
   }
 
   @override
+  Future<void> nextTrack() async {
+    await SpotifySdk.skipNext();
+  }
+
+  @override
+  Future<void> prevTrack() async {
+    await SpotifySdk.skipPrevious();
+  }
+
+  @override
   Future<Track?> getCurrentTrack() async {
     final data = await api.player.currentlyPlaying();
     return data.item;
