@@ -33,12 +33,21 @@ class PlayerController extends GetxController {
     super.onInit();
   }
 
+  Future<void> togglePlay() async {
+    if (isPlaying.value) {
+      api.pause();
+    } else {
+      SpotifySdk.resume();
+    }
+    isPlaying.toggle();
+  }
+
   Future<void> play(Track track) async {
     currentTrack.value = track;
-    isPlaying.value = false;
     imageProvider.value = null;
     progressMs.value = 0;
 
+    isPlaying.value = true;
     await api.play(track.uri!);
   }
 
@@ -62,6 +71,7 @@ class PlayerController extends GetxController {
   Future _getPlaybackState() async {
     playbackState.value = await api.getPlaybackState();
     currentTrack.value = playbackState.value!.item;
+    isPlaying.value = playbackState.value!.isPlaying!;
     _loadImage();
   }
 

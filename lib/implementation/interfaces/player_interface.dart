@@ -6,7 +6,12 @@ import 'package:spotify_sdk/spotify_sdk.dart';
 mixin SpotifyPlayer on ApiService implements PlayerInterface {
   @override
   Future<void> play(String trackId) async {
-    SpotifySdk.play(spotifyUri: trackId);
+    await SpotifySdk.play(spotifyUri: trackId);
+  }
+
+  @override
+  Future<void> pause() async {
+    await SpotifySdk.pause();
   }
 
   @override

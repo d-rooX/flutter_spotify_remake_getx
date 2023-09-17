@@ -58,7 +58,61 @@ class PlayerBottom extends GetView<PlayerController> {
             );
           }),
           const PlaybackLine(),
+          const SizedBox(height: 35),
+
+          /// Control Panel
+          Obx(
+            () => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                const PlaybackButton(
+                  width: 12,
+                  icon: Icon(Icons.chevron_left, size: 32),
+                ),
+                PlaybackButton(
+                  width: 12,
+                  onTap: () async => await controller.togglePlay(),
+                  icon: controller.isPlaying.value
+                      ? const Icon(Icons.pause, size: 32)
+                      : const Icon(Icons.play_arrow, size: 32),
+                ),
+                const PlaybackButton(
+                  width: 12,
+                  icon: Icon(Icons.chevron_right, size: 32),
+                ),
+              ],
+            ),
+          ),
+
+          ///
         ],
+      ),
+    );
+  }
+}
+
+class PlaybackButton extends StatelessWidget {
+  final double width;
+  final Icon icon;
+  final VoidCallback? onTap;
+  const PlaybackButton({
+    super.key,
+    required this.width,
+    required this.icon,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(width),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
+        child: icon,
       ),
     );
   }
