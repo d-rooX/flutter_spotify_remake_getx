@@ -2,8 +2,11 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:spotify/spotify.dart';
+import 'package:spotify_remake_getx/modules/player/controllers/player_controller.dart';
+import 'package:spotify_remake_getx/modules/player/player_page.dart';
 import 'package:spotify_remake_getx/utils.dart';
 
 class BigTrackCard extends StatefulWidget {
@@ -23,9 +26,8 @@ class _BigTrackCardState extends State<BigTrackCard> {
 
   @override
   Widget build(BuildContext context) {
-    final imageProvider = CachedNetworkImageProvider(
-      widget.track.album!.images![1].url!,
-    );
+    final imageProvider =
+        CachedNetworkImageProvider(widget.track.album!.images![1].url!);
 
     // Generating colors for title & artist block
     if (paletteColors == null || oldTrack != widget.track) {
@@ -45,24 +47,36 @@ class _BigTrackCardState extends State<BigTrackCard> {
       );
     }
 
-    return Container(
-      width: 250,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(35),
-        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          const Icon(Icons.more_horiz, color: Colors.white, size: 36),
-          BlurredTrackInfo(
-            paletteColors: paletteColors,
-            textStyle: textStyle,
-            track: widget.track,
-          )
-        ],
+    return GestureDetector(
+      onTap: () {
+        final controller = Get.find<PlayerController>();
+        if (controller.currentTrack!.id! != widget.track.id!) {
+          controller.api.play(widget.track.uri!);
+        }
+        Get.to(() => const PlayerPage());
+      },
+      child: Hero(
+        tag: "${widget.track.id!}_card",
+        child: Container(
+          width: 250,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(35),
+            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const Icon(Icons.more_horiz, color: Colors.white, size: 36),
+              BlurredTrackInfo(
+                paletteColors: paletteColors,
+                textStyle: textStyle,
+                track: widget.track,
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
