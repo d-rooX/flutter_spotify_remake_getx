@@ -1,9 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:spotify_remake_getx/modules/player/controllers/player_controller.dart';
 
-class TrackCover extends GetView<PlayerController> {
-  final ImageProvider imageProvider;
+class TrackCover extends StatelessWidget {
+  final CachedNetworkImageProvider imageProvider;
   final String trackId;
   const TrackCover({
     super.key,
@@ -18,10 +17,10 @@ class TrackCover extends GetView<PlayerController> {
       child: SizedBox(
         width: 350,
         height: 350,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            image: DecorationImage(image: imageProvider),
-          ),
+        child: CachedNetworkImage(
+          // using url here not imageProvider to use useOldImageOnUrlChange: true
+          imageUrl: imageProvider.url,
+          useOldImageOnUrlChange: true,
         ),
       ),
     );

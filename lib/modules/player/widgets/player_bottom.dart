@@ -57,6 +57,7 @@ class PlayerBottom extends GetView<PlayerController> {
               ],
             );
           }),
+          const SizedBox(height: 5),
           const PlaybackLine(),
           const SizedBox(height: 35),
 

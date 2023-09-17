@@ -22,7 +22,7 @@ class PlayerController extends GetxController {
 
   final playbackState = Rx<PlaybackState?>(null);
   final paletteColors = <Color>[].obs;
-  final imageProvider = Rx<ImageProvider?>(null);
+  final imageProvider = Rx<CachedNetworkImageProvider?>(null);
 
   Timer? timer;
 
@@ -30,6 +30,7 @@ class PlayerController extends GetxController {
   void onInit() {
     _initSpotifySDK();
     _getPlaybackState();
+    _loadImage();
     super.onInit();
   }
 
@@ -44,10 +45,8 @@ class PlayerController extends GetxController {
 
   Future<void> play(Track track) async {
     currentTrack.value = track;
-    imageProvider.value = null;
-    progressMs.value = 0;
-
     isPlaying.value = false;
+
     await api.play(track.uri!);
   }
 
@@ -62,8 +61,9 @@ class PlayerController extends GetxController {
   }
 
   void _loadImage() async {
-    final _imageProvider =
-        CachedNetworkImageProvider(currentTrack.value!.album!.images![0].url!);
+    final _imageProvider = CachedNetworkImageProvider(
+      currentTrack.value!.album!.images![0].url!,
+    );
     imageProvider.value = _imageProvider;
 
     final _paletteColors = <Color>[];
@@ -82,7 +82,6 @@ class PlayerController extends GetxController {
     playbackState.value = await api.getPlaybackState();
     currentTrack.value = playbackState.value!.item;
     isPlaying.value = playbackState.value!.isPlaying!;
-    _loadImage();
   }
 
   // todo move private methods to class
@@ -100,21 +99,29 @@ class PlayerController extends GetxController {
   }
 
   void _subscribeToPlayerState() {
-    SpotifySdk.subscribePlayerState().listen((event) async {
-      await Future.delayed(
-        const Duration(milliseconds: 50),
-        () async {
-          try {
-            await _getPlaybackState();
-          } catch (e) {
-            log("No playback state was got from spotify", error: true);
-          }
+    SpotifySdk.subscribePlayerState().listen(
+      (event) async {
+        await Future.delayed(
+          const Duration(milliseconds: 50),
+          _onNewTrack,
+        );
+      },
+    );
+  }
 
-          await _getTrackDuration();
-          _startTimer();
-        },
+  Future<void> _onNewTrack() async {
+    try {
+      await _getPlaybackState();
+    } catch (e) {
+      log(
+        "Error while loading playback state",
+        error: "No playback state was got from spotify",
       );
-    });
+    }
+
+    await _getTrackDuration();
+    _loadImage();
+    _startTimer();
   }
 
   Future<void> _initSpotifySDK() async {
@@ -134,7 +141,7 @@ class PlayerController extends GetxController {
 
     progressMs.value = state.progress_ms!;
     isPlaying.value = state.isPlaying!;
-    trackDuration.value = state.item!.duration;
+    trackDuration.value = state.item?.duration;
   }
 
   void _startTimer() {

@@ -54,7 +54,7 @@ class _BigTrackCardState extends State<BigTrackCard> {
             .assignAll(paletteColors!.map((e) => e.color).toList());
 
         if (controller.currentTrack.value!.id! != widget.track.id!) {
-          await controller.play(widget.track);
+          controller.play(widget.track);
         }
         Get.to(() => PlayerPage(openedTrackImageProvider: imageProvider));
       },

@@ -25,6 +25,18 @@ mixin SpotifyPlayer on ApiService implements PlayerInterface {
   }
 
   @override
+  Future<Iterable<Track>> getQueue() async {
+    final queue = await api.player.queue();
+    for (final track in queue.queue!) {
+      print(
+        "${track.name!} --- ${track.artists!.map((e) => e.name).join(", ")}",
+      );
+    }
+
+    return queue.queue!;
+  }
+
+  @override
   Future<Track?> getCurrentTrack() async {
     final data = await api.player.currentlyPlaying();
     return data.item;
