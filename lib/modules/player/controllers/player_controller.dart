@@ -55,7 +55,7 @@ class PlayerController extends GetxController {
     final _paletteColors = <Color>[];
     for (final color in await Utils.getImagePalette(_imageProvider)) {
       Color _color = color.color;
-      if (_color.computeLuminance() > 0.5) {
+      if (_color.computeLuminance() > 0.6) {
         _color = _color.withOpacity(0.7);
       }
       _paletteColors.add(_color);

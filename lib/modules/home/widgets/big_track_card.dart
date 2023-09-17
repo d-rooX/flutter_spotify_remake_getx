@@ -50,6 +50,9 @@ class _BigTrackCardState extends State<BigTrackCard> {
     return GestureDetector(
       onTap: () async {
         final controller = Get.find<PlayerController>();
+        controller.paletteColors
+            .assignAll(paletteColors!.map((e) => e.color).toList());
+
         if (controller.currentTrack.value!.id! != widget.track.id!) {
           await controller.play(widget.track);
         }
