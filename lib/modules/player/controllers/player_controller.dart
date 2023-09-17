@@ -15,16 +15,16 @@ class PlayerController extends GetxController {
   final PlayerInterface api;
   PlayerController({required this.api});
 
-  final progressMs = RxInt(0);
+  final currentTrack = Rx<Track?>(null);
   final trackDuration = Rx<Duration?>(null);
+  final progressMs = RxInt(0);
   final isPlaying = RxBool(false);
 
   final playbackState = Rx<PlaybackState?>(null);
   final paletteColors = <Color>[].obs;
   final imageProvider = Rx<CachedNetworkImageProvider?>(null);
-  Timer? timer;
 
-  Track? get currentTrack => playbackState.value!.item;
+  Timer? timer;
 
   @override
   void onInit() {
@@ -38,17 +38,18 @@ class PlayerController extends GetxController {
     _startTimer();
   }
 
-  Future<void> play(String trackId) async {
+  Future<void> play(Track track) async {
+    currentTrack.value = track;
     isPlaying.value = false;
     imageProvider.value = null;
     progressMs.value = 0;
 
-    await api.play(trackId);
+    await api.play(track.uri!);
   }
 
   void _loadImage() async {
     final _imageProvider =
-        CachedNetworkImageProvider(currentTrack!.album!.images![0].url!);
+        CachedNetworkImageProvider(currentTrack.value!.album!.images![0].url!);
     imageProvider.value = _imageProvider;
 
     final _paletteColors = <Color>[];
@@ -65,6 +66,7 @@ class PlayerController extends GetxController {
 
   Future _getPlaybackState() async {
     playbackState.value = await api.getPlaybackState();
+    currentTrack.value = playbackState.value!.item;
     _loadImage();
   }
 
@@ -88,7 +90,7 @@ class PlayerController extends GetxController {
         const Duration(milliseconds: 50),
         () async {
           try {
-            playbackState.value = await api.getPlaybackState();
+            await _getPlaybackState();
           } catch (e) {
             log("No playback state was got from spotify", error: true);
           }

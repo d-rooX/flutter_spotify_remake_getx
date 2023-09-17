@@ -13,7 +13,7 @@ class PlayerBottom extends GetView<PlayerController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Obx(() {
-            final track = controller.currentTrack!;
+            final track = controller.currentTrack.value!;
 
             return Column(
               mainAxisSize: MainAxisSize.min,

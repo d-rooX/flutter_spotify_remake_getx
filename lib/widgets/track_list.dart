@@ -34,7 +34,7 @@ class TrackView extends StatelessWidget {
       child: InkWell(
         onTap: () async {
           final controller = Get.find<PlayerController>();
-          await controller.play(track.uri!);
+          await controller.play(track);
           log("Playing ${track.id!}", name: "TrackView");
         },
         child: Container(
