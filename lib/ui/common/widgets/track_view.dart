@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:spotify/spotify.dart';
+import 'package:spotify_remake_getx/ui/common/extensions/track_extension.dart';
 import 'package:spotify_remake_getx/ui/common/styles/track_view_styles.dart';
 import 'package:spotify_remake_getx/ui/modules/player/controllers/player_controller.dart';
 
@@ -19,6 +20,7 @@ class TrackView extends StatelessWidget {
         onTap: () async {
           final controller = Get.find<PlayerController>();
           await controller.play(track);
+          // ignore: avoid_non_null_assertion
           log("Playing ${track.id!}", name: "TrackView");
         },
         child: Container(
@@ -31,7 +33,8 @@ class TrackView extends StatelessWidget {
                 borderRadius:
                     BorderRadius.circular(TrackViewStyles.coverBorderRadius),
                 child: CachedNetworkImage(
-                  imageUrl: track.album!.images![1].url!,
+                  // todo handle null
+                  imageUrl: track.smallImageUrl ?? '',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -42,7 +45,7 @@ class TrackView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      track.name!,
+                      track.name ?? '<#NO_NAME>',
                       overflow: TextOverflow.fade,
                       maxLines: 1,
                       style: const TextStyle(
@@ -51,7 +54,7 @@ class TrackView extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      track.artists!.map((e) => e.name!).join(" | "),
+                      track.formattedArtists ?? '<#NO_ARTISTS>',
                       overflow: TextOverflow.fade,
                       softWrap: false,
                       style: const TextStyle(
