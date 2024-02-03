@@ -35,7 +35,7 @@ class PlayerController extends GetxController {
     final successfullyLoaded = await _initSpotifySDK();
     if (successfullyLoaded) {
       await _getPlaybackState();
-      await _loadImage();
+      await _loadTrackImage();
     } else {
       unawaited(_showLoadingErrorDialog());
     }
@@ -71,24 +71,28 @@ class PlayerController extends GetxController {
     await api.prevTrack();
   }
 
-  Future<void> _loadImage() async {
-    final _imageProvider =
-        CachedNetworkImageProvider(currentTrack.value!.bigImageUrl);
-    imageProvider.value = _imageProvider;
+  Future<void> _loadTrackImage() async {
+    final imageUrl = currentTrack.value?.bigImageUrl;
 
-    final _paletteColors = <Color>[];
-    for (final color in await Utils.getImagePalette(_imageProvider)) {
-      Color _color = color.color;
-      if (_color.computeLuminance() > _lightColorLuminanceThreshold) {
-        _color = _color.withOpacity(_lightColorOpacity);
+    if (imageUrl == null) throw 'Image URL is null';
+    if (imageUrl == imageProvider.value?.url) return;
+
+    final newImage = CachedNetworkImageProvider(imageUrl);
+    imageProvider.value = newImage;
+
+    final imagePalette = await Utils.getImagePalette(newImage);
+    final newPaletteColors = imagePalette.map((paletteColor) {
+      final color = paletteColor.color;
+      if (color.computeLuminance() > _lightColorLuminanceThreshold) {
+        return color.withOpacity(_lightColorOpacity);
       }
-      _paletteColors.add(_color);
-    }
+      return color;
+    });
 
-    paletteColors.assignAll(_paletteColors);
+    paletteColors.assignAll(newPaletteColors);
   }
 
-  Future _getPlaybackState() async {
+  Future<void> _getPlaybackState() async {
     playbackState.value = await api.getPlaybackState();
     currentTrack.value = playbackState.value!.item;
     isPlaying.value = playbackState.value!.isPlaying!;
@@ -111,10 +115,11 @@ class PlayerController extends GetxController {
   void _subscribeToPlayerState() {
     SpotifySdk.subscribePlayerState().listen(
       (event) async {
-        print(event.track);
+        final newTrack = event.track;
+        if (newTrack == null || newTrack.uri == currentTrack.value?.uri) return;
 
         await Future.delayed(
-          const Duration(milliseconds: 50),
+          const Duration(milliseconds: 100),
           _onNewTrack,
         );
       },
@@ -125,14 +130,11 @@ class PlayerController extends GetxController {
     try {
       await _getPlaybackState();
     } catch (e) {
-      log(
-        "Error while loading playback state",
-        error: "No playback state was got from spotify",
-      );
+      log("Error while loading playback state", error: e);
     }
 
-    await _getTrackDuration();
-    await _loadImage();
+    unawaited(_getTrackDuration());
+    unawaited(_loadTrackImage());
     _startTimer();
   }
 

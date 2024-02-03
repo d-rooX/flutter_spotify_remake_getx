@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,6 +18,7 @@ class PlayerPage extends GetView<PlayerController> {
   @override
   Widget build(BuildContext context) {
     if (openedTrackImageProvider != null) {
+      log('Setting image provider: ${openedTrackImageProvider?.url}');
       controller.imageProvider.value = openedTrackImageProvider;
     }
 
