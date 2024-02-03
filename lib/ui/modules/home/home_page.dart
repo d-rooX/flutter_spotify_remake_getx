@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:spotify_remake_getx/modules/home/controllers/home_controller.dart';
-import 'package:spotify_remake_getx/modules/home/controllers/home_tab_controller.dart';
-import 'package:spotify_remake_getx/modules/home/widgets/carousel_section.dart';
-import 'package:spotify_remake_getx/modules/home/widgets/home_search_bar.dart';
-import 'package:spotify_remake_getx/modules/home/widgets/home_tabs.dart';
-import 'package:spotify_remake_getx/widgets/track_list.dart';
+import 'package:spotify_remake_getx/ui/modules/home/controllers/home_controller.dart';
+import 'package:spotify_remake_getx/ui/modules/home/controllers/home_tab_controller.dart';
+import 'package:spotify_remake_getx/ui/modules/home/widgets/carousel_section.dart';
+import 'package:spotify_remake_getx/ui/modules/home/widgets/home_search_bar.dart';
+import 'package:spotify_remake_getx/ui/modules/home/widgets/home_tabs.dart';
+import 'package:spotify_remake_getx/ui/widgets/track_list.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:spotify/spotify.dart';
-import 'package:spotify_remake_getx/modules/player/controllers/player_controller.dart';
-import 'package:spotify_remake_getx/modules/player/player_page.dart';
+import 'package:spotify_remake_getx/ui/modules/player/controllers/player_controller.dart';
+import 'package:spotify_remake_getx/ui/modules/player/player_page.dart';
 import 'package:spotify_remake_getx/utils.dart';
 
 class BigTrackCard extends StatefulWidget {

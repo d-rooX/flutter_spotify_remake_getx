@@ -1,6 +1,6 @@
 class Routes {
-  static const HOME = '/home';
-  static const PLAYER = '/player';
-  static const LIBRARY = '/library';
-  static const MY_PLAYLISTS = '/my_playlists';
+  static const home = '/home';
+  static const player = '/player';
+  static const library = '/library';
+  static const myPlaylist = '/my_playlists';
 }

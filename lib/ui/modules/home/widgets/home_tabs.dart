@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:spotify_remake_getx/modules/home/controllers/home_tab_controller.dart';
-
-import 'tab_chip.dart';
+import 'package:spotify_remake_getx/ui/modules/home/controllers/home_tab_controller.dart';
+import 'package:spotify_remake_getx/ui/modules/home/widgets/tab_chip.dart';
 
 class HomeTabs extends GetView<HomeTabController> {
   const HomeTabs({super.key});

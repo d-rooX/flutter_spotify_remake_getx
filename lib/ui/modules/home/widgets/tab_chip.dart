@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:spotify_remake_getx/modules/home/controllers/home_tab_controller.dart';
+import 'package:spotify_remake_getx/ui/modules/home/controllers/home_tab_controller.dart';
 
 class TabChip extends GetView<HomeTabController> {
   // todo remove GetX dependency

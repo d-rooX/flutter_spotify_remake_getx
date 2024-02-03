@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:spotify_remake_getx/modules/home/controllers/home_tab_controller.dart';
-
-import 'big_track_card.dart';
+import 'package:spotify_remake_getx/ui/modules/home/controllers/home_tab_controller.dart';
+import 'package:spotify_remake_getx/ui/modules/home/widgets/big_track_card.dart';
 
 class CarouselSection extends StatelessWidget {
   const CarouselSection({super.key});

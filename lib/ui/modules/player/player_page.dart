@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:spotify_remake_getx/modules/player/controllers/player_controller.dart';
-import 'package:spotify_remake_getx/modules/player/widgets/player_bottom.dart';
-import 'package:spotify_remake_getx/modules/player/widgets/player_top.dart';
-import 'package:spotify_remake_getx/modules/player/widgets/track_cover.dart';
+import 'package:spotify_remake_getx/ui/modules/player/controllers/player_controller.dart';
+import 'package:spotify_remake_getx/ui/modules/player/widgets/player_bottom.dart';
+import 'package:spotify_remake_getx/ui/modules/player/widgets/player_top.dart';
+import 'package:spotify_remake_getx/ui/modules/player/widgets/track_cover.dart';
 
 class PlayerPage extends GetView<PlayerController> {
   final CachedNetworkImageProvider? openedTrackImageProvider;
@@ -61,7 +61,7 @@ class _LoadedPlayerPage extends GetView<PlayerController> {
                   trackId: controller.currentTrack.value!.id!,
                 ),
                 const SizedBox(height: 15),
-                const PlayerBottom()
+                const PlayerBottom(),
               ],
             ),
           ),

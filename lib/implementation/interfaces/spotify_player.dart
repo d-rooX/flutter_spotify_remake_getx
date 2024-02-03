@@ -1,9 +1,9 @@
 import 'package:spotify/spotify.dart';
 import 'package:spotify_remake_getx/abstract/interfaces/player_interface.dart';
-import 'package:spotify_remake_getx/abstract/services/api_service.dart';
+import 'package:spotify_remake_getx/abstract/interfaces/spotify_api_service_interface.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
-mixin SpotifyPlayer on ApiService implements PlayerInterface {
+mixin SpotifyPlayer on SpotifyApiServiceInterface implements PlayerInterface {
   @override
   Future<void> play(String trackId) async {
     await SpotifySdk.play(spotifyUri: trackId);

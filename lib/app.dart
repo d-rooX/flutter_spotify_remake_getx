@@ -13,14 +13,13 @@ class App extends StatelessWidget {
       body: SizedBox.expand(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () => Get.toNamed(Routes.HOME),
+              onPressed: () => Get.toNamed(Routes.home),
               child: const Text("Home"),
             ),
             ElevatedButton(
-              onPressed: () => Get.toNamed(Routes.PLAYER),
+              onPressed: () => Get.toNamed(Routes.player),
               child: const Text("Player"),
             ),
           ],
@@ -28,23 +27,4 @@ class App extends StatelessWidget {
       ),
     );
   }
-}
-
-class AppConstants {
-  static const CLIENT_ID = "faec7ac92a714a359b4dbafba1b04e1a";
-  static const CLIENT_SECRET = "3f5e0244b87140b49e6f75811185f076";
-  static const REDIRECT_URL = "https://spotapi.droox.dev/callback";
-  static const CLIENT_SCOPES = [
-    'user-read-recently-played',
-    'user-read-private',
-    'user-top-read',
-    'user-library-read',
-    'user-modify-playback-state',
-    'user-read-playback-state',
-    'user-read-currently-playing',
-
-    ///
-    'playlist-read-private',
-    'playlist-read-collaborative',
-  ];
 }

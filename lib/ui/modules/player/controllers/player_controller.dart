@@ -2,19 +2,18 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spotify/spotify.dart';
 import 'package:spotify_remake_getx/abstract/interfaces/player_interface.dart';
-import 'package:spotify_remake_getx/app.dart';
+import 'package:spotify_remake_getx/app_constants.dart';
 import 'package:spotify_remake_getx/utils.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
 class PlayerController extends GetxController {
   final PlayerInterface api;
-  PlayerController({required this.api});
-
   final currentTrack = Rx<Track?>(null);
   final trackDuration = Rx<Duration?>(null);
   final progressMs = RxInt(0);
@@ -24,21 +23,31 @@ class PlayerController extends GetxController {
   final paletteColors = <Color>[].obs;
   final imageProvider = Rx<CachedNetworkImageProvider?>(null);
 
+  static const _lightColorLuminanceThreshold = 0.6;
+  static const _lightColorOpacity = 0.7;
+
   Timer? timer;
 
+  PlayerController({required this.api});
   @override
-  void onInit() {
-    _initSpotifySDK();
-    _getPlaybackState();
-    _loadImage();
+  Future<void> onInit() async {
+    final successfullyLoaded = await _initSpotifySDK();
+    if (successfullyLoaded) {
+      await (
+        _getPlaybackState(),
+        _loadImage(),
+      ).wait;
+    } else {
+      unawaited(_showLoadingErrorDialog());
+    }
     super.onInit();
   }
 
   Future<void> togglePlay() async {
     if (isPlaying.value) {
-      api.pause();
+      await api.pause();
     } else {
-      SpotifySdk.resume();
+      await SpotifySdk.resume();
     }
     isPlaying.toggle();
   }
@@ -47,7 +56,10 @@ class PlayerController extends GetxController {
     currentTrack.value = track;
     isPlaying.value = false;
 
-    await api.play(track.uri!);
+    final uri = track.uri;
+    if (uri == null) throw "Track uri is not received";
+
+    await api.play(uri);
   }
 
   Future<void> nextTrack() async {
@@ -60,7 +72,7 @@ class PlayerController extends GetxController {
     await api.prevTrack();
   }
 
-  void _loadImage() async {
+  Future<void> _loadImage() async {
     final _imageProvider = CachedNetworkImageProvider(
       currentTrack.value!.album!.images![0].url!,
     );
@@ -69,8 +81,8 @@ class PlayerController extends GetxController {
     final _paletteColors = <Color>[];
     for (final color in await Utils.getImagePalette(_imageProvider)) {
       Color _color = color.color;
-      if (_color.computeLuminance() > 0.6) {
-        _color = _color.withOpacity(0.7);
+      if (_color.computeLuminance() > _lightColorLuminanceThreshold) {
+        _color = _color.withOpacity(_lightColorOpacity);
       }
       _paletteColors.add(_color);
     }
@@ -90,8 +102,8 @@ class PlayerController extends GetxController {
     final storage = await SharedPreferences.getInstance();
     String? accessToken = storage.getString("spotifySDK_AccessToken");
     accessToken ??= await SpotifySdk.getAccessToken(
-      clientId: AppConstants.CLIENT_ID,
-      redirectUrl: AppConstants.REDIRECT_URL,
+      clientId: AppConstants.clientID,
+      redirectUrl: AppConstants.redirectURL,
     );
 
     await storage.setString('spotifySDK_AccessToken', accessToken);
@@ -101,6 +113,8 @@ class PlayerController extends GetxController {
   void _subscribeToPlayerState() {
     SpotifySdk.subscribePlayerState().listen(
       (event) async {
+        print(event.track);
+
         await Future.delayed(
           const Duration(milliseconds: 50),
           _onNewTrack,
@@ -124,13 +138,23 @@ class PlayerController extends GetxController {
     _startTimer();
   }
 
-  Future<void> _initSpotifySDK() async {
-    await SpotifySdk.connectToSpotifyRemote(
-      clientId: AppConstants.CLIENT_ID,
-      redirectUrl: AppConstants.REDIRECT_URL,
-      accessToken: await _getAccessToken(),
-    );
-    _subscribeToPlayerState();
+  Future<bool> _initSpotifySDK() async {
+    try {
+      await SpotifySdk.connectToSpotifyRemote(
+        clientId: AppConstants.clientID,
+        redirectUrl: AppConstants.redirectURL,
+        accessToken: await _getAccessToken(),
+      );
+      _subscribeToPlayerState();
+
+      return true;
+    } on PlatformException catch (e) {
+      if (e.code == 'CouldNotFindSpotifyApp') {
+        print('NOT FOUND SPOTIFY APP');
+      }
+    }
+
+    return false;
   }
 
   Future<void> _getTrackDuration() async {
@@ -161,5 +185,24 @@ class PlayerController extends GetxController {
         }
       }
     });
+  }
+
+  Future<void> _showLoadingErrorDialog() {
+    return Get.dialog(
+      const AlertDialog(
+        backgroundColor: Colors.black,
+        content: SizedBox(
+          height: 100,
+          width: 150,
+          child: Center(
+            child: Text(
+              "Looks like there was an error while loading an app.\n"
+              "Player wouldn't be available",
+              style: TextStyle(color: Colors.white, fontFamily: "Roboto"),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

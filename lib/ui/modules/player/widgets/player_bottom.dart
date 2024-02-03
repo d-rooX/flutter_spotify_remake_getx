@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:spotify_remake_getx/modules/player/controllers/player_controller.dart';
+import 'package:spotify_remake_getx/ui/modules/player/controllers/player_controller.dart';
 
 class PlayerBottom extends GetView<PlayerController> {
   const PlayerBottom({super.key});

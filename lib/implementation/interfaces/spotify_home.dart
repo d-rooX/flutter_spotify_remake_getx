@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:spotify/spotify.dart';
 import 'package:spotify_remake_getx/abstract/interfaces/home_interface.dart';
-import 'package:spotify_remake_getx/abstract/services/api_service.dart';
+import 'package:spotify_remake_getx/abstract/interfaces/spotify_api_service_interface.dart';
 
-mixin SpotifyHome on ApiService implements HomeInterface {
+mixin SpotifyHome on SpotifyApiServiceInterface implements HomeInterface {
   @override
   Future<Iterable<PlayHistory>> loadRecentlyPlayed() async {
     final result = await api.me.recentlyPlayed().all();

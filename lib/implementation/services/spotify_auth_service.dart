@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:spotify/spotify.dart';
 import 'package:spotify_remake_getx/abstract/services/auth_service.dart';
 import 'package:spotify_remake_getx/abstract/services/credentials_repository.dart';
-import 'package:spotify_remake_getx/app.dart';
+import 'package:spotify_remake_getx/app_constants.dart';
 import 'package:spotify_remake_getx/implementation/services/spotify_api_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -26,13 +26,13 @@ class SpotifyAuthService implements AuthService<SpotifyApiService> {
 
     final grant = SpotifyApi.authorizationCodeGrant(
       SpotifyApiCredentials(
-        AppConstants.CLIENT_ID,
-        AppConstants.CLIENT_SECRET,
+        AppConstants.clientID,
+        AppConstants.clientSecret,
       ),
     );
     final authUri = grant.getAuthorizationUrl(
-      Uri.parse(AppConstants.REDIRECT_URL),
-      scopes: AppConstants.CLIENT_SCOPES,
+      Uri.parse(AppConstants.redirectURL),
+      scopes: AppConstants.clientScopes,
     );
     final responseUri = await showAuthWebView(authUri);
     final api = SpotifyApi.fromAuthCodeGrant(grant, responseUri);
@@ -49,7 +49,7 @@ class SpotifyAuthService implements AuthService<SpotifyApiService> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (request) {
-            if (request.url.startsWith(AppConstants.REDIRECT_URL)) {
+            if (request.url.startsWith(AppConstants.redirectURL)) {
               responseURI = request.url;
               Get.back();
               return NavigationDecision.prevent;

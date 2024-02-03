@@ -6,12 +6,12 @@ import 'package:spotify_remake_getx/abstract/interfaces/home_interface.dart';
 
 class HomeController extends GetxController {
   final HomeInterface api;
+
+  final recentlyPlayed = <Track>[].obs;
+  final recommendedTracks = <Track>[].obs;
+  final trendingTracks = <Track>[].obs;
+
   HomeController({required this.api});
-
-  var recentlyPlayed = <Track>[].obs;
-  var recommendedTracks = <Track>[].obs;
-  var trendingTracks = <Track>[].obs;
-
   @override
   void onInit() {
     reload();

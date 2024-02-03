@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:spotify/spotify.dart';
-import 'package:spotify_remake_getx/modules/player/controllers/player_controller.dart';
+import 'package:spotify_remake_getx/ui/modules/player/controllers/player_controller.dart';
 
 class TrackList extends StatelessWidget {
   final List<Track> tracks;
