@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spotify/spotify.dart';
 import 'package:spotify_remake_getx/abstract/interfaces/player_interface.dart';
 import 'package:spotify_remake_getx/app_constants.dart';
+import 'package:spotify_remake_getx/ui/common/extensions/track_extension.dart';
 import 'package:spotify_remake_getx/utils.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
@@ -33,10 +34,8 @@ class PlayerController extends GetxController {
   Future<void> onInit() async {
     final successfullyLoaded = await _initSpotifySDK();
     if (successfullyLoaded) {
-      await (
-        _getPlaybackState(),
-        _loadImage(),
-      ).wait;
+      await _getPlaybackState();
+      await _loadImage();
     } else {
       unawaited(_showLoadingErrorDialog());
     }
@@ -45,9 +44,9 @@ class PlayerController extends GetxController {
 
   Future<void> togglePlay() async {
     if (isPlaying.value) {
-      await api.pause();
+      unawaited(api.pause());
     } else {
-      await SpotifySdk.resume();
+      unawaited(SpotifySdk.resume());
     }
     isPlaying.toggle();
   }
@@ -73,9 +72,8 @@ class PlayerController extends GetxController {
   }
 
   Future<void> _loadImage() async {
-    final _imageProvider = CachedNetworkImageProvider(
-      currentTrack.value!.album!.images![0].url!,
-    );
+    final _imageProvider =
+        CachedNetworkImageProvider(currentTrack.value!.bigImageUrl);
     imageProvider.value = _imageProvider;
 
     final _paletteColors = <Color>[];
@@ -134,7 +132,7 @@ class PlayerController extends GetxController {
     }
 
     await _getTrackDuration();
-    _loadImage();
+    await _loadImage();
     _startTimer();
   }
 

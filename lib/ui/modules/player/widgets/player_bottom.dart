@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:spotify_remake_getx/ui/common/extensions/track_extension.dart';
 import 'package:spotify_remake_getx/ui/modules/player/controllers/player_controller.dart';
 
 class PlayerBottom extends GetView<PlayerController> {
@@ -13,14 +16,18 @@ class PlayerBottom extends GetView<PlayerController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Obx(() {
-            final track = controller.currentTrack.value!;
+            final track = controller.currentTrack.value;
+            if (track == null) {
+              log('Track is null');
+              return const Column();
+            }
 
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  track.name!,
+                  track.title,
                   softWrap: false,
                   overflow: TextOverflow.fade,
                   style: const TextStyle(
@@ -29,7 +36,7 @@ class PlayerBottom extends GetView<PlayerController> {
                   ),
                 ),
                 Text(
-                  track.artists!.map((e) => e.name!).join(", "),
+                  track.formattedArtists,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey.shade400,
@@ -40,14 +47,10 @@ class PlayerBottom extends GetView<PlayerController> {
           }),
           const SizedBox(height: 20),
           Obx(() {
-            final currentMinutes =
-                "${controller.progressMs.value ~/ 60000}:${((controller.progressMs.value ~/ 1000) % 60).toString().padLeft(2, '0')}";
+            final currentMinutes = _getPlayedTime();
             final duration = controller.trackDuration.value;
-            String durationString = "HUI";
-            if (duration != null) {
-              durationString =
-                  "${duration.inMinutes.remainder(60)}:${(duration.inSeconds.remainder(60).toString().padLeft(2, '0'))}";
-            }
+            if (duration == null) throw "Duration is null";
+            final durationString = _getDuration(duration);
 
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,19 +71,19 @@ class PlayerBottom extends GetView<PlayerController> {
               children: [
                 PlaybackButton(
                   width: 12,
-                  onTap: () async => await controller.prevTrack(),
+                  onTap: controller.prevTrack,
                   icon: const Icon(Icons.chevron_left, size: 32),
                 ),
                 PlaybackButton(
                   width: 12,
-                  onTap: () async => await controller.togglePlay(),
+                  onTap: controller.togglePlay,
                   icon: controller.isPlaying.value
                       ? const Icon(Icons.pause, size: 32)
                       : const Icon(Icons.play_arrow, size: 32),
                 ),
                 PlaybackButton(
                   width: 12,
-                  onTap: () async => await controller.nextTrack(),
+                  onTap: controller.nextTrack,
                   icon: const Icon(Icons.chevron_right, size: 32),
                 ),
               ],
@@ -92,6 +95,20 @@ class PlayerBottom extends GetView<PlayerController> {
       ),
     );
   }
+
+  String _getPlayedTime() {
+    final minutes = controller.progressMs.value ~/ 60000;
+    final seconds = (controller.progressMs.value ~/ 1000) % 60;
+    // ignore: no_magic_number
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  String _getDuration(Duration duration) {
+    final minutes = duration.inMinutes.remainder(60);
+    final seconds = duration.inSeconds.remainder(60);
+    // ignore: no_magic_number
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
 }
 
 class PlaybackButton extends StatelessWidget {
@@ -99,10 +116,10 @@ class PlaybackButton extends StatelessWidget {
   final Icon icon;
   final VoidCallback? onTap;
   const PlaybackButton({
-    super.key,
     required this.width,
     required this.icon,
     this.onTap,
+    super.key,
   });
 
   @override

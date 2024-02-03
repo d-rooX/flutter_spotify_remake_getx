@@ -56,9 +56,16 @@ class _LoadedPlayerPage extends GetView<PlayerController> {
                 SizedBox(height: Get.mediaQuery.padding.top + 25),
                 const PlayerTop(),
                 const SizedBox(height: 30),
-                TrackCover(
-                  imageProvider: controller.imageProvider.value!,
-                  trackId: controller.currentTrack.value!.id!,
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOut,
+                  width: 350,
+                  height: 350,
+                  padding: EdgeInsets.all(controller.isPlaying.value ? 0 : 5),
+                  child: TrackCover(
+                    imageProvider: controller.imageProvider.value!,
+                    trackId: controller.currentTrack.value!.id!,
+                  ),
                 ),
                 const SizedBox(height: 15),
                 const PlayerBottom(),
