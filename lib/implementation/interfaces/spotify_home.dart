@@ -25,11 +25,21 @@ mixin SpotifyHome on ApiService implements HomeInterface {
 
     final recommendations = await api.recommendations.get(
       seedTracks: seedTracks,
-      seedArtists: (await api.me.topArtists()).map((e) => e.id!).take(2),
+      seedArtists: await _getSeedArtists(),
       seedGenres: [],
       limit: 20,
     );
     return recommendations;
+  }
+
+  /// Returns itearble of top artists ids
+  Future<Iterable<String>> _getSeedArtists() async {
+    final topArtists = (await api.me.topArtists().first(10)).items;
+    if (topArtists == null) {
+      throw "Top artists are null";
+    }
+
+    return topArtists.map((e) => e.id!).take(2);
   }
 
   @override

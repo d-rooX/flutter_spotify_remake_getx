@@ -4,15 +4,15 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_remake_getx/abstract/services/api_service.dart';
 import 'package:spotify_remake_getx/abstract/services/auth_service.dart';
-import 'package:spotify_remake_getx/implementation/services/api_service.dart';
-import 'package:spotify_remake_getx/implementation/services/credentials_repository.dart';
+import 'package:spotify_remake_getx/implementation/services/spotify_api_service.dart';
+import 'package:spotify_remake_getx/implementation/services/spotify_credentials_repository.dart';
 import 'package:spotify_remake_getx/modules/home/controllers/home_controller.dart';
 import 'package:spotify_remake_getx/modules/player/controllers/player_controller.dart';
 import 'package:spotify_remake_getx/modules/player/player_page.dart';
 import 'package:spotify_remake_getx/routes.dart';
 
 import 'app.dart';
-import 'implementation/services/auth_service.dart';
+import 'implementation/services/spotify_auth_service.dart';
 import 'modules/home/home_page.dart';
 
 class AuthBinding extends Bindings {
