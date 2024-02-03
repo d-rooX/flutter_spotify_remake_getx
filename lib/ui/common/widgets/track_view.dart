@@ -4,28 +4,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:spotify/spotify.dart';
+import 'package:spotify_remake_getx/ui/common/styles/track_view_styles.dart';
 import 'package:spotify_remake_getx/ui/modules/player/controllers/player_controller.dart';
-
-class TrackList extends StatelessWidget {
-  final List<Track> tracks;
-  const TrackList({super.key, required this.tracks});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(
-        tracks.length,
-        (index) => TrackView(
-          track: tracks[index],
-        ),
-      ),
-    );
-  }
-}
 
 class TrackView extends StatelessWidget {
   final Track track;
-  const TrackView({super.key, required this.track});
+  const TrackView({required this.track, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +22,14 @@ class TrackView extends StatelessWidget {
           log("Playing ${track.id!}", name: "TrackView");
         },
         child: Container(
-          height: 75,
+          height: TrackViewStyles.height,
           padding: const EdgeInsets.symmetric(horizontal: 15),
           margin: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius:
+                    BorderRadius.circular(TrackViewStyles.coverBorderRadius),
                 child: CachedNetworkImage(
                   imageUrl: track.album!.images![1].url!,
                   fit: BoxFit.cover,
@@ -53,16 +38,16 @@ class TrackView extends StatelessWidget {
               const SizedBox(width: 15),
               Expanded(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       track.name!,
                       overflow: TextOverflow.fade,
-                      maxLines: 2,
+                      maxLines: 1,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 19,
+                        fontSize: TrackViewStyles.titleSize,
                       ),
                     ),
                     Text(
@@ -71,16 +56,16 @@ class TrackView extends StatelessWidget {
                       softWrap: false,
                       style: const TextStyle(
                         color: Colors.grey,
-                        fontSize: 16,
+                        fontSize: TrackViewStyles.titleSize,
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
               const Icon(
-                Icons.favorite_border,
+                TrackViewStyles.likeIconAsset,
                 color: Colors.white,
-                size: 36,
+                size: TrackViewStyles.likeIconSize,
               ),
             ],
           ),

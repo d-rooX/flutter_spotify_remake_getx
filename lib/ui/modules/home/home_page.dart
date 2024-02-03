@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:spotify_remake_getx/ui/common/widgets/track_list.dart';
 import 'package:spotify_remake_getx/ui/modules/home/controllers/home_controller.dart';
 import 'package:spotify_remake_getx/ui/modules/home/controllers/home_tab_controller.dart';
 import 'package:spotify_remake_getx/ui/modules/home/widgets/carousel_section.dart';
 import 'package:spotify_remake_getx/ui/modules/home/widgets/home_search_bar.dart';
 import 'package:spotify_remake_getx/ui/modules/home/widgets/home_tabs.dart';
-import 'package:spotify_remake_getx/ui/widgets/track_list.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -14,16 +14,18 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<HomeController>();
     final tabController = Get.put(
-      HomeTabController(tabs: [
-        HomeTracksTab(
-          title: "Recommended",
-          tracks: controller.recommendedTracks,
-        ),
-        HomeTracksTab(
-          title: "Recently Played",
-          tracks: controller.recentlyPlayed,
-        ),
-      ]),
+      HomeTabController(
+        tabs: [
+          HomeTracksTab(
+            title: "Recommended",
+            tracks: controller.recommendedTracks,
+          ),
+          HomeTracksTab(
+            title: "Recently Played",
+            tracks: controller.recentlyPlayed,
+          ),
+        ],
+      ),
     );
 
     return Scaffold(
